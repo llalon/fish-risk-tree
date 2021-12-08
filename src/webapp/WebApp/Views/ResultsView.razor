@@ -1,0 +1,57 @@
+﻿@page "/results"
+@page "/results/{id:guid}"
+
+@inject ResultsViewModel resultsViewModel
+
+<h3>Access Results</h3>
+
+@if (@resultsViewModel.Id == Guid.Empty)
+{
+    <p>No job found.</p>
+
+    <p>
+        Job Id: 
+        <input @bind="@resultsViewModel.SubmissionIdEntry" />
+    </p>
+
+    <button @onclick="@resultsViewModel.GetResults">
+        Get results
+    </button>
+}
+else
+{
+    <p>Job id: @resultsViewModel.Id.ToString()</p>
+    <p>Status: @resultsViewModel.JobStatus</p>
+    <p>Start time: @resultsViewModel.JobStartTime</p>
+    <p>Last update: @resultsViewModel.LastCheckTime</p>
+
+    <button @onclick="@resultsViewModel.UpdateJob">
+            Check status
+    </button>
+
+    if (@resultsViewModel.IsCompleted)
+    {
+        <button @onclick="@resultsViewModel.DownloadResults">
+            Download Results
+        </button>
+    }
+}
+
+@code {
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        try
+        {
+            resultsViewModel.Id = Id;
+            resultsViewModel.UpdateJob();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+}

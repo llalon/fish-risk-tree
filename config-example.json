@@ -1,0 +1,11 @@
+{
+    "Taxon": "Cichlidae",
+    "Marker": "COI-5P",
+    "NumBootstraps": 0,
+    "DataDirectory": "./data",
+    "MuscleBinaryPath": "muscle",
+    "RaxmlBinaryPath": "raxmlHPC",
+    "FishIucnFinderBinaryPath": "./src/tools/fish_iucn_finder.pl",
+    "Seed": 1234,
+    "Threads": 0
+}

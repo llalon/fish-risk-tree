@@ -1,0 +1,66 @@
+﻿@page "/submission"
+
+@inject SubmissionViewModel submissionViewModel
+
+<h3>New Analysis</h3>
+
+@if (@submissionViewModel.IsLoading)
+{
+    <div class="spinner"></div>
+}
+else
+{
+    @if (@submissionViewModel.IsSubmitted)
+    {
+
+        if (string.IsNullOrEmpty(@submissionViewModel.SubmissionId))
+        {
+            <p>Oops! Something went wrong...</p>
+
+        }
+        else
+        {
+            <p>The job has been submitted: <a target="_blank" class="font-weight-bold link-dark" href="results/@submissionViewModel.SubmissionId">@submissionViewModel.SubmissionId</a></p>
+
+            <p>See the results page for the status. It may take up to 1 week for the analysis to complete.</p>
+        }
+
+        <button @onclick="@submissionViewModel.NewJob">Exit</button>
+    }
+    else
+    {
+        <p>
+            Taxon: 
+            <input @bind="@submissionViewModel.Taxon" />
+        </p>
+
+
+        <p>
+            Marker: 
+            <input @bind="@submissionViewModel.Marker" />
+        </p>
+
+        <p>
+            Randomization Seed: 
+            <input @bind="@submissionViewModel.Seed" />
+        </p>
+
+        <p>
+            Use bootstrapping: 
+            <input type="checkbox" checked="@submissionViewModel.BootstrapEnabled" @onchange="eventArgs => { submissionViewModel.BootstrapEnabled = !submissionViewModel.BootstrapEnabled; }" />
+        </p>
+
+        @if(@submissionViewModel.BootstrapEnabled)
+        {
+            <p>
+                Number of bootstraps: 
+                <input @bind="@submissionViewModel.NumBootstraps" />
+            </p>
+        }
+
+        <button @onclick="@submissionViewModel.SubmitJob">
+            Submit Job
+        </button>
+    }
+
+}
