@@ -58,9 +58,10 @@ namespace WebApp.Services
             psi.RedirectStandardOutput = false;
             psi.Arguments = filePath;
 
-#if DEBUG
-            psi.FileName = $"cat";
-#endif
+            // Don't overwrite analsysis in demo mode
+            if (Constants.DEMO_MODE)
+                psi.FileName = $"cat";
+            
             Process process = Process.Start(psi);
         }
     }
