@@ -36,6 +36,8 @@ A web GUI is also provided and can be accessed using docker:
 docker run -d -p 8080:80 -v out:/out llalon/fish-risk-tree:gui-latest
 ```
 
+![](img/screenshot.png)
+
 #### Limitations
 
 - Does not support sub species (returns NA)
