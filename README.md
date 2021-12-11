@@ -1,6 +1,6 @@
 # Fish Risk Tree
 
-A bioinformatics pipeline for generating phylogenetic trees annotated with IUCN risk status for fish taxon.
+A bioinformatics pipeline for generating phylogenetic trees annotated with IUCN risk status for fish taxon. Tree's with annotations are created using the NHX format.
 
 #### Pipeline Parameters
 
@@ -41,4 +41,5 @@ docker run -d -p 8080:80 -v out:/out llalon/fish-risk-tree:gui-latest
 #### Limitations
 
 - Does not support sub species (returns NA)
-- Limited to data from Bold Systems
+- Sequence data limited to Bold Systems
+- IUCN data limited to FishBase
