@@ -146,7 +146,8 @@ while ( my $line = <$info_data> ) {
         }
 
         # Create annotation string
-        $genus_species =~ s/ /-/g;
+        $genus_species =~ s/ /_/g;
+
         my $annotation        = "[\&\&NHX:IUCN=$iucn:SPP=$genus_species]";
         my $replacement       = $tree_id_match . $substring . $annotation;
         my $string_to_replace = $tree_id_match . $substring;
