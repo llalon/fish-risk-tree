@@ -62,6 +62,18 @@ ggplot(df.info, aes(x=fct_infreq(iucn))) +
   ggtitle("") +
   theme_minimal()
 
+# Distributions of IUCN by genus
+df.info %>%
+  filter(iucn != "Data deficient (DD)") %>%
+  filter(iucn != "Not Evaluated") %>%
+  filter(iucn != "Least Concern (LC)") %>%
+  ggplot(., aes(x=fct_infreq(iucn), fill = genus_name)) +
+    geom_bar() +
+    ylab("Number of Sequence Samples") +
+    xlab("Conservation Status") +
+    ggtitle("") +
+    theme_minimal()
+
 # Map IUCN distribution on world map
 worldmap <- getMap(resolution = "coarse")
 plot(worldmap, xlim = c(-80, 160), ylim = c(-50, 100), 
