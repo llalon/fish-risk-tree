@@ -1,3 +1,5 @@
+# This file contains R code to generate plots specific to the analysis for Cichlidae and the assosiated paper.
+
 library(tidyverse)
 library(ggplot2)
 library(Biostrings)
@@ -44,6 +46,13 @@ df.info <- df.info %>%
 
 df.info$iucn <- as.factor(df.info$iucn)
 
+# Find number of species that don't have ANY conservation status in at least 1 sample
+df.info %>%
+  filter(iucn == "Not Evaluated") %>%
+  select(species_name) %>%
+  unique() %>%
+  count()
+
 # Distributions of IUCN
 ggplot(df.info, aes(x=fct_infreq(iucn))) +
   geom_bar(fill = COLORS) +
@@ -56,9 +65,11 @@ ggplot(df.info, aes(x=fct_infreq(iucn))) +
 # Map IUCN distribution on world map
 worldmap <- getMap(resolution = "coarse")
 plot(worldmap, xlim = c(-80, 160), ylim = c(-50, 100), 
-     asp = 1, bg = "lightblue", col = "white", fill = T)
+     asp = 1, bg = "white", col = "grey", fill = T)
+palette(COLORS)
 points(df.info$lon, df.info$lat, 
-       col = df.info$iucn, cex = 0.75)
+       col = df.info$iucn, cex = 1)
+
 
 # Sequences
 file.seqs <- paste0(DATA.DIR.RAW, "/bold_cichlidae_COI-5P_seq.fasta")
