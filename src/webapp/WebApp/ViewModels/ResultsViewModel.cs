@@ -1,4 +1,4 @@
-﻿using WebApp.Models;
+using WebApp.Models;
 using WebApp.Services;
 
 namespace WebApp.ViewModels

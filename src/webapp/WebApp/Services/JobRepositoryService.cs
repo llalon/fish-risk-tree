@@ -1,4 +1,4 @@
-﻿using System.IO.Compression;
+using System.IO.Compression;
 using WebApp.Models;
 
 namespace WebApp.Services
