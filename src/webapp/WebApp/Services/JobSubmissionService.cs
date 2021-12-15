@@ -1,4 +1,4 @@
-﻿using WebApp.Models;
+using WebApp.Models;
 using System;
 using System.Text.Json;
 using System.Diagnostics;

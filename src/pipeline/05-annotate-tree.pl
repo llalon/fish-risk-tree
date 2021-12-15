@@ -40,13 +40,13 @@ my $decoded_json = decode_json($json_text)
 # --------------------------------------------------------------
 # Script parameters
 # --------------------------------------------------------------
-my $TAXON            = $decoded_json->{"Taxon"};
-my $MARKER       = $decoded_json->{"Marker"};
-my $DATA_DIR         = $decoded_json->{"DataDirectory"};
-my $DATA_DIR_INTERIM = $DATA_DIR . "/interim";
+my $TAXON              = $decoded_json->{"Taxon"};
+my $MARKER             = $decoded_json->{"Marker"};
+my $DATA_DIR           = $decoded_json->{"DataDirectory"};
+my $DATA_DIR_INTERIM   = $DATA_DIR . "/interim";
 my $DATA_DIR_PROCESSED = $DATA_DIR . "/processed";
-my $DELIM                   = "\t";
-my $NA_STRING = "NA";
+my $DELIM              = "\t";
+my $NA_STRING          = "NA";
 
 `mkdir -p $DATA_DIR_INTERIM`;
 `mkdir -p $DATA_DIR_PROCESSED`;
@@ -56,10 +56,20 @@ print("| Done\n");
 # --------------------------------------------------------------
 # Adding IUCN to the tree file using the Hampshire eXtend format.
 # --------------------------------------------------------------
-my $input_file = $DATA_DIR_INTERIM . "/RAxML_bestTree.bold_" . $TAXON . "_". $MARKER . "_tree";
-my $output_file = $DATA_DIR_PROCESSED . "/bold_" . $TAXON . "_". $MARKER . "_tree_annotated.nhx";
+my $input_file =
+    $DATA_DIR_INTERIM
+  . "/RAxML_bestTree.bold_"
+  . $TAXON . "_"
+  . $MARKER . "_tree";
+my $output_file =
+    $DATA_DIR_PROCESSED
+  . "/bold_"
+  . $TAXON . "_"
+  . $MARKER
+  . "_tree_annotated.nhx";
 
-my $info_file = $DATA_DIR_INTERIM . "/bold_" . $TAXON . "_". $MARKER . "_info_iucn.tsv";
+my $info_file =
+  $DATA_DIR_INTERIM . "/bold_" . $TAXON . "_" . $MARKER . "_info_iucn.tsv";
 
 # Read both info file and tree file
 open( my $input_data, '<', $input_file )
@@ -72,7 +82,7 @@ open( my $info_data, '<', $info_file )
 my $input_file_content = do { local $/; <$input_data> };
 
 # Make sure its on only 1 line.
-$input_file_content = strip(trim( $input_file_content));
+$input_file_content = strip( trim($input_file_content) );
 
 # Step 1. Shorten IDs from ID|Specues to just IDs
 $input_file_content =~ s/\|[^:]*:/:/g;
@@ -88,60 +98,63 @@ while ( my $line = <$info_data> ) {
     my @fields = split $DELIM, $line;
 
     if ( $row_current != 1 ) {
+
         # Find the genus species
         my $genus_species = trim( $fields[21] );
-        my $genus = trim( $fields[19] );
-        my $iucn_long = $fields[68];
+        my $genus         = trim( $fields[19] );
+        my $iucn_long     = $fields[68];
 
         # Set empty values to NA
-        if (!(defined $genus and length $genus)) {
-          $genus = $NA_STRING;
+        if ( !( defined $genus and length $genus ) ) {
+            $genus = $NA_STRING;
         }
 
-        if (!(defined $genus_species and length $genus_species)) {
-          $genus_species = $NA_STRING;
+        if ( !( defined $genus_species and length $genus_species ) ) {
+            $genus_species = $NA_STRING;
         }
 
-
-        # Convert IUCN from long form to short form. i.e. Least concerned (LC) => LC.
-        # Not evalulated is the same as NA so it works fine.
+   # Convert IUCN from long form to short form. i.e. Least concerned (LC) => LC.
+   # Not evalulated is the same as NA so it works fine.
         my $iucn = $NA_STRING;
-        if (defined $iucn_long and length $iucn_long){
-          my($iucn_short) = $iucn_long =~ /\((\w+)\)/;
-          $iucn = $iucn_short;
+        if ( defined $iucn_long and length $iucn_long ) {
+            my ($iucn_short) = $iucn_long =~ /\((\w+)\)/;
+            $iucn = $iucn_short;
         }
 
         # Make IUCN NA if its empty.
-        if (!(defined $iucn and length $iucn)) {
-          $iucn = $NA_STRING;
+        if ( !( defined $iucn and length $iucn ) ) {
+            $iucn = $NA_STRING;
         }
 
-        $iucn = strip(trim($iucn));
+        $iucn = strip( trim($iucn) );
 
         # get the ID (as in the tsv not the tree)
-        my $info_id = trim( $fields[0] );
+        my $info_id       = trim( $fields[0] );
         my $tree_id_match = $info_id . ":";
 
-        # Find the string between the tree_id_match and either ',' or ')'. i.e. "ID-0001:0.0032783728," => ID-0001:0.0032783728
-        # And replace it with its annotated string. i.e "ID-0001:0.0032783728," => ID-0001:0.0032783728 => ID-0001:0.0032783728[ANNOTATION]
-        my $string = $input_file_content;
+# Find the string between the tree_id_match and either ',' or ')'. i.e. "ID-0001:0.0032783728," => ID-0001:0.0032783728
+# And replace it with its annotated string. i.e "ID-0001:0.0032783728," => ID-0001:0.0032783728 => ID-0001:0.0032783728[ANNOTATION]
+        my $string    = $input_file_content;
         my $substring = "";
-        
+
         $string =~ /$tree_id_match(.*?)[\,\)]/;
         ($substring) = $1;
 
         # ID not found in tree. Skip.
-        if (!(defined $substring and length $substring)) {
-          next;
+        if ( !( defined $substring and length $substring ) ) {
+            next;
         }
 
         # Create annotation string
-        my $annotation = "[\&\&NHX:IUCN=$iucn]";
-        my $replacement = $tree_id_match . $substring . "[\&\&NHX:IUCN=$iucn]";
+        $genus_species =~ s/ /_/g;
+
+        my $annotation        = "[\&\&NHX:IUCN=$iucn:SPP=$genus_species]";
+        my $replacement       = $tree_id_match . $substring . $annotation;
         my $string_to_replace = $tree_id_match . $substring;
 
-        # Find the replacement string within the tree and replace it with its annotated version
-        print "| Adding annotation: $string_to_replace" . " => " . $replacement . "\n";
+# Find the replacement string within the tree and replace it with its annotated version
+        print "| Adding annotation: $string_to_replace" . " => "
+          . $replacement . "\n";
 
         # Do the replacement
         $input_file_content =~ s/$string_to_replace/$replacement/;

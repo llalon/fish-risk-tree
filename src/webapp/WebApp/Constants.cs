@@ -1,4 +1,4 @@
-﻿namespace WebApp
+namespace WebApp
 {
     public class Constants
     {
