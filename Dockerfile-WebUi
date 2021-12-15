@@ -2,12 +2,12 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0-bullseye-slim AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0-bullseye-slim AS build
 WORKDIR /src
-COPY ["WebApp/WebApp.csproj", "WebApp/"]
+COPY ["src/webapp/WebApp/WebApp.csproj", "WebApp/"]
 RUN dotnet restore "WebApp/WebApp.csproj"
 COPY . .
-WORKDIR "/src/WebApp"
+WORKDIR "/src/src/webapp/WebApp"
 RUN dotnet build "WebApp.csproj" -c Release -o /app/build
 
 FROM build AS publish
@@ -16,4 +16,10 @@ RUN dotnet publish "WebApp.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+# Install pipeline
+COPY ./src/pipeline/* /bin/
+COPY ./src/tools/* /bin/
+RUN apt-get update && apt-get install -y wget \
+    perl libsys-cpu-perl libjson-perl libjson-xs-perl liblwp-online-perl \
+    muscle raxml
 ENTRYPOINT ["dotnet", "WebApp.dll"]

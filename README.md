@@ -20,12 +20,14 @@ Provide the runtime parameters to the pipeline as JSON:
 }
 ```
 
-#### Running the Pipeline via CLI
+#### Running the Pipeline via CLI (RECOMMENDED)
 
-To run the pipeline:
+To run the pipeline, generate a valid configuration file and run using the following:
 
 ```
-docker run llalon/fish-risk-tree:latest run_pipeline.sh config.json
+docker run -it --rm -v <PATH TO SAVE TO LOCALLY>:<PATH TO DATA DIRECTORY IN CONFIG> llalon/fish-risk-tree:latest
+
+run_pipeline.sh config.json
 ```
 
 #### Running the Pipeline via GUI
