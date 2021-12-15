@@ -72,9 +72,11 @@ df.info %>%
     ylab("Number of Sequence Samples") +
     xlab("Conservation Status") +
     ggtitle("") +
-    theme_minimal()
+    theme_minimal() +
+    theme(legend.position="bottom") +
+    scale_fill_discrete(name = "Genus")
 
-# Map IUCN distribution on world map
+ # Map IUCN distribution on world map
 worldmap <- getMap(resolution = "coarse")
 plot(worldmap, xlim = c(-80, 160), ylim = c(-50, 100), 
      asp = 1, bg = "white", col = "grey", fill = T)
